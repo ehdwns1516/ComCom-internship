@@ -1,70 +1,42 @@
-# Getting Started with Create React App
+# Bible Verse Generator(GPT-2)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/ehdwns1516/bible_verse_generator)
 
-## Available Scripts
+## Motive
+성경은 인류 역사상 가장 많이 팔린 책입니다. 종교적인 이유도 있겠지만, 성경의 내용에 좋은 글이 많이 있어서 꾸준히 베스트 셀러 자리를 지키고 있지 않나 생각이 듭니다. 저는 기독교 신자가 아니지만 가끔 성경의 내용이 궁금할 때가 있어 언젠가 한 번 읽어보고 싶었습니다. 성경의 양은 워낙 방대해서 쉽게 읽을 수 없기 때문에 keyword를 기반으로 제가 궁금한 부분을 읽고 싶었고, 그래서 keyword를 입력했을 때 그 keyword에 관련된 성경 구문을 만들어주는 서비스를 만들게 되었습니다.
 
-In the project directory, you can run:
+## Dataset
+kaggle에서 [bible dataset](https://www.kaggle.com/rexhaif/rus-eng-bible)을 받아와 [Teacherble NLP](https://ainize.ai/teachable-nlp)를 통해 dataset을 gpt2-small에 fine-tunning하여 모델을 만들었습니다.
 
-### `npm start`
+## How to use
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![Initial](https://user-images.githubusercontent.com/85500873/124550427-9655bb80-de6b-11eb-8dc1-85d74dbb0e13.png)
+* 성경책에서 찾아보고 싶은 keyword를 textarea에 입력하고 Make Verse! 버튼을 누르면 입력한 keyword로 시작하는 성경책 구문이 작성됩니다.(ex: when the world)
+* 입력하는 keyword는 영어만 지원합니다.
+* 생성되는 문장은 약 50개의 단어로 생성됩니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## API Health Check
+```
+$ curl --request GET 'https://train-95y6kshrdyxtj652igs7-gpt2-train-teachable-ainize.endpoint.ainize.ai/ping'
+{
+  "status": "Healthy"
+}
+```
 
-### `npm test`
+## API Prediction Test
+```
+$ curl --request POST 'https://train-95y6kshrdyxtj652igs7-gpt2-train-teachable-ainize.endpoint.ainize.ai/predictions/gpt-2-en-small-finetune' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "text": "when the world",
+    "num_samples": 1,
+    "length": 50
+  }'
+[
+  "when the world shall come full to meet him again his disciples will rejoice in him saying he shall not be afraid of them nor shall they be shaken from him he will not bring them into captivity for he hath sent them not into the city that they should see him"
+]
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## other API uses
+* text to vector => https://main-gpt-2-server-gkswjdzz.endpoint.ainize.ai/preprocess
+* vector to text => https://main-gpt-2-server-gkswjdzz.endpoint.ainize.ai/postprocess
