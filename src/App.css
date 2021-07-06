@@ -1,0 +1,10 @@
+.App {
+  height: 100vh;
+  text-align: center;
+  align-content: center;
+  background-color: rgb(179, 179, 179);
+  height: 100vh;
+  background-image: url('./bible.jpeg');
+  background-repeat : no-repeat;
+  background-size : cover;
+}
