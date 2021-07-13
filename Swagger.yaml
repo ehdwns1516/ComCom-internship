@@ -27,9 +27,9 @@ paths:
             schema:
               type: object
               properties:
-                context:
+                Premise:
                   type: string
-                question:
+                Hypothesis:
                   type: string
               required:
                 - Premise
