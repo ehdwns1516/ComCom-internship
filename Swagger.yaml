@@ -1,5 +1,4 @@
-openapi: 3.0.1
-
+openapi: 3.0.0
 info:
   title: klue-roberta-base-kornli
   version: 1.0.0
@@ -41,9 +40,34 @@ paths:
             application/json:
               schema:
                 type: object
+                example: {
+                  "0":[
+                    {"label":"entailment","score": 점수},{"label":"neutral","score": 점수},{"label":"contradiction","score": 점수}
+                  ]
+                }
         '400':
           description: "Bad Request Error"
         '429':
           description: "Too many requests"
         '500':
           description: "Server-side Error"
+  /queue_clear:
+    get:
+      responses:
+        '200':
+          description: "Clear request queue"
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Clear
+  /healthz:
+    get:
+      responses:
+        '200':
+          description: "get status of model server"
+          content:
+            application/json:
+              schema: 
+                type: string
+                example: Health
