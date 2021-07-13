@@ -1,7 +1,7 @@
 openapi: 3.0.1
 
 info:
-  title: KLUE-RoBERTa-base-KorNLI
+  title: klue-roberta-base-kornli
   version: 1.0.0
   contact:
     name: Dongjoon
@@ -15,7 +15,7 @@ info:
           * If the context is longer than 1200 characters, the context may be cut in the middle and the result may not come out well.
     ---
 servers:
-  - url: https://main-klue-sts-robert-audrb96.endpoint.ainize.ai
+  - url: https://main-klue-roberta-base-kornli-ehdwns1516.endpoint.ainize.ai
 
 paths:
   /generate:
