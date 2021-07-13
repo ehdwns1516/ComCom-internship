@@ -1,1 +1,1 @@
-# klue-roberta-base_kornli
+# KLUE-RoBERTa-base-KorNLI

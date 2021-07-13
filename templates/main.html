@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>KLUE-RoBERTa-base-KorNLI model</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<script type="text/javascript">
+    let time_obj = undefined;
+    let flag = undefined;
+    let chars = undefined;
+
+    window.onload = () => {
+        time_obj = document.getElementById("timer");
+        flag = false;       // 더블 클릭 체크
+    }
+
+    function double_submit_check() {
+        if (flag) {
+            console.log("double");
+            return true;
+        }
+        else {
+            flag = true;
+
+            return false;
+        }
+    }
+
+    function send_req() {
+        if (double_submit_check()){
+            return ;
+        }
+
+        let premise = document.getElementById("premise").value;
+        let hypothesis = document.getElementById("hypothesis").value;
+
+        if ( premise == '') {
+            document.getElementById('warning').innerText = 'Please fill text!';
+            flag = false;
+            return ;
+        }
+
+        if ( hypothesis == '') {
+            document.getElementById('warning').innerText = 'Please fill text!';
+            flag = false;
+            return ;
+        }
+
+        const formData = new FormData();
+        const url = "/generate";
+        let start = 0;
+
+        formData.append('premise', premise);
+        formData.append('hypothesis', hypothesis);
+
+        // timer
+        timer = setInterval(() => {
+            start += 1;
+            time_obj.innerText = `${start / 10} 's`;
+        }, 100);
+
+        fetch (url, { method: 'POST', body: formData, })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                clearInterval(timer);
+                flag = false;
+            }
+        }).catch(err => {
+            clearInterval(timer);
+            flag = false;
+            document.getElementById('warning').innerText = err;
+        }).then(data => {
+            const result = document.getElementById('result');
+            result.innerHTML = data[0][0]['label'] + ": " + data[0][0]['score'] +
+             "<br>" + data[0][1]['label'] + ": " + data[0][1]['score'] + "<br>" + data[0][2]['label'] + ": " + data[0][2]['score'];
+            clearInterval(timer);
+            time_obj.innerText = 'Done!';
+            flag = false;
+        }).catch(err => {
+            clearInterval(timer);
+            flag = false;
+            document.getElementById('warning').innerText = err;
+        });
+
+    }
+
+</script>
+<body>
+    <div class="styles">
+        <style>
+                #button{
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                    border-top-left-radius: 5pt;
+                    border-top-right-radius: 5pt;
+                    border-bottom-left-radius: 5pt;
+                    border-bottom-right-radius: 5pt;
+                }
+
+                #length{
+                    width: 70px;
+                    height: 30px;
+                    border-top-left-radius: 5pt;
+                    border-top-right-radius: 5pt;
+                    border-bottom-left-radius: 5pt;
+                    border-bottom-right-radius: 5pt;
+                }
+
+                table {
+                  border-spacing: 10px;
+                  border-collapse: separate;
+                }
+
+        </style>
+    </div>
+    <div class="container">
+        <div class="jumbotron mt-3">
+            <div class="intro">
+                <br>
+                <!-- Project title -->
+                <h1>KLUE-RoBERTa-base-KorNLI(Korean)</h1><br>
+                <p>This model takes the premise sentence and hypothesis sentence and classifies the relationship between the two sentences as one of entailment, contradiction, and neutral.</p>
+                <p>Try using the KLUE-RoBERTa-base-KorNLI model as a KLUE-RoBERTa-base model trained on kakaobrain/KorNLI dataset.</p>
+                <a>Github : </a> <a href="https://github.com/KLUE-benchmark/KLUE" target="_blank">KLUE-benchmark/KLUE</a><br>
+                <a>Open API : </a> <a href="https://ainize.ai/ehdwns1516/KLUE-RoBERTa-base-KorNLI" target="_blank">On Ainize</a><br>
+                <a>License : </a> <a href="https://github.com/KLUE-benchmark/KLUE/blob/main/License.md" target="_blank">CC-BY-SA-4.0</a><br>
+            </div>
+
+            <hr width="90%">
+
+            <div class="Notice">
+                <h3>Notice</h3>
+                <ul>
+                    <li>This model trained with Korean dataset.</li>
+                    <li>You can use English, but don't expect accuracy.</li>
+                    <li>If the context is longer than 1200 characters, the context may be cut in the middle and the result may not come out well.</li>
+                </ul>
+            </div>
+
+            <hr width="90%">
+
+            <div class="sample">
+                <h3><label>Example</label></h3>
+                <h5><label>Premise</label></h5>
+                <label>저는, 그냥 알아내려고 거기 있었어요.</label>
+                <h5><label>Hypothesis</label></h5>
+                <label>이해하려고 거기에 있었을 뿐이에요.</label><br><br>
+                <h5><label>Result</label></h5>
+                <label>entailment: 0.8261673450469971<br>neutral: 0.15067163109779358<br>contradiction: 0.02316104620695114</label><br>
+            </div>
+
+            <br><hr width="90%">
+
+            <div class="generate">
+                <h3>Try it!</h3><br>
+                <label>Premise</label>
+                <div><textarea type="text" id="premise" style="width:80%; height: 100px" ></textarea></div>
+                <label>Hypothesis</label>
+                <div><textarea type="text" id="hypothesis" style="width:80%; height: 100px"></textarea></div>
+                <button class="btn btn-primary btn=lg" type="submit" id="button" onclick="send_req();">Summit</button><br>
+                <label>Timer:&nbsp;</label><label id="timer">0.0</label><br>
+                <b><label id="warning" style="color:red;"></label></b>
+            </div>
+
+            <hr width="90%">
+
+            <div class="result">
+                <h3><label>Result</label></h3>
+                <label id="result"></label>
+            </div>
+
+            <br><hr width="50%">
+        </div>
+    </div>
+</body>
+</html>

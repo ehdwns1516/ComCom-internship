@@ -1,0 +1,49 @@
+openapi: 3.0.1
+
+info:
+  title: KLUE-RoBERTa-base-KorNLI
+  version: 1.0.0
+  contact:
+    name: Dongjoon
+  description: |
+    This model takes the premise sentence and hypothesis sentence and classifies the relationship between the two sentences as one of entailment, contradiction, and neutral.
+    ---
+          How to use:
+          * This model trained with Korean dataset.
+          * Input premise sentence and hypothesis sentence.
+          * You can use English, but don't expect accuracy.
+          * If the context is longer than 1200 characters, the context may be cut in the middle and the result may not come out well.
+    ---
+servers:
+  - url: https://main-klue-sts-robert-audrb96.endpoint.ainize.ai
+
+paths:
+  /generate:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                context:
+                  type: string
+                question:
+                  type: string
+              required:
+                - Premise
+                - Hypothesis
+      responses: # Set response
+        '200':
+          description: "Successful Response"
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: "Bad Request Error"
+        '429':
+          description: "Too many requests"
+        '500':
+          description: "Server-side Error"
