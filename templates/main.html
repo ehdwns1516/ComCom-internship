@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>KLUE-RoBERTa-base-KorNLI model</title>
+    <title>Review Generator</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -27,7 +27,6 @@
         }
         else {
             flag = true;
-
             return false;
         }
     }
@@ -36,17 +35,31 @@
         if (double_submit_check()){
             return ;
         }
+        
+        let star_rating = document.getElementById("star_rating").value;
+        let context = document.getElementById("context").value;
+        const result = document.getElementById('result');
+        let chk_radio = document.getElementsByName('chk_lan');
+		let sel_lan = null;
 
-        let premise = document.getElementById("premise").value;
-        let hypothesis = document.getElementById("hypothesis").value;
+		for(let i=0;i<chk_radio.length;i++){
+			if(chk_radio[i].checked == true){ 
+				sel_lan = chk_radio[i].value;
+			}
+		}
 
-        if ( premise == '') {
-            document.getElementById('warning').innerText = 'Please fill text!';
+		if(sel_lan == null){
+            document.getElementById('warning').innerText = 'Please select language!';
+            flag = false;
+            return ;
+		}
+        if ( star_rating == '') {
+            document.getElementById('warning').innerText = 'Please choose star rating!';
             flag = false;
             return ;
         }
 
-        if ( hypothesis == '') {
+        if ( context == '') {
             document.getElementById('warning').innerText = 'Please fill text!';
             flag = false;
             return ;
@@ -56,8 +69,9 @@
         const url = "/generate";
         let start = 0;
 
-        formData.append('premise', premise);
-        formData.append('hypothesis', hypothesis);
+        formData.append('sel_lan', sel_lan);
+        formData.append('star_rating', star_rating);
+        formData.append('context', context);
 
         // timer
         timer = setInterval(() => {
@@ -78,12 +92,15 @@
             flag = false;
             document.getElementById('warning').innerText = err;
         }).then(data => {
-            const result = document.getElementById('result');
-            result.innerHTML = data[0][0]['label'] + ": " + data[0][0]['score'] +
-             "<br>" + data[0][1]['label'] + ": " + data[0][1]['score'] + "<br>" + data[0][2]['label'] + ": " + data[0][2]['score'];
+            const context_ = document.getElementById("context");
+            result.innerHTML = data[0]["generated_text"];
+            context_.value = data[0]["generated_text"];
             clearInterval(timer);
             time_obj.innerText = 'Done!';
             flag = false;
+            if (context == result.innerHTML) {
+                alert("Input sentence and result is same. Please add words.")
+            }
         }).catch(err => {
             clearInterval(timer);
             flag = false;
@@ -126,9 +143,8 @@
             <div class="intro">
                 <br>
                 <!-- Project title -->
-                <h1>KLUE-RoBERTa-base-KorNLI(Korean)</h1><br>
-                <p>This model takes the premise sentence and hypothesis sentence and classifies the relationship between the two sentences as one of entailment, contradiction, and neutral.</p>
-                <p>Try using the KLUE-RoBERTa-base-KorNLI model as a KLUE-RoBERTa-base model trained on kakaobrain/KorNLI dataset.</p>
+                <h1>Review Generator</h1><br>
+                <p>These models are each trained with a dataset of reviews with star rating from 1 to 5 for Engish and Korean.</p>
                 <a>Github : </a> <a href="https://github.com/KLUE-benchmark/KLUE" target="_blank">KLUE-benchmark/KLUE</a><br>
                 <a>Open API : </a> <a href="https://ainize.ai/ehdwns1516/KLUE-RoBERTa-base-KorNLI" target="_blank">On Ainize</a><br>
                 <a>License : </a> <a href="https://github.com/KLUE-benchmark/KLUE/blob/main/License.md" target="_blank">CC-BY-SA-4.0</a><br>
@@ -140,8 +156,8 @@
                 <h3>Notice</h3>
                 <ul>
                     <li>This model trained with Korean dataset.</li>
-                    <li>You can use English, but don't expect accuracy.</li>
-                    <li>If the context is longer than 1200 characters, the context may be cut in the middle and the result may not come out well.</li>
+                    <li>Select language you want generate review.</li>
+                    <li>You must choose star rating and input your text.</li>
                 </ul>
             </div>
 
@@ -149,23 +165,43 @@
 
             <div class="sample">
                 <h3><label>Example</label></h3>
-                <h5><label>Premise</label></h5>
-                <label>저는, 그냥 알아내려고 거기 있었어요.</label>
-                <h5><label>Hypothesis</label></h5>
-                <label>이해하려고 거기에 있었을 뿐이에요.</label><br><br>
+                <h5><label>Language</label></h5>
+                <input type="radio" name="chk_info" checked="checked" value="English"> English  
+                <input type="radio" name="chk_info" value="Korean"> Korean
+                <br>
+                <br>
+                <h5><label>star rating</label></h5>
+                <select>
+                    <option value="5">⭐️⭐️⭐️⭐️⭐️ </option>
+                </select>
+                <br>
+                <br>
+                <h5><label>Context</label></h5>
+                <label>the cost</label><br><br>
                 <h5><label>Result</label></h5>
-                <label>entailment: 0.8261673450469971<br>neutral: 0.15067163109779358<br>contradiction: 0.02316104620695114</label><br>
+                <label>the cost is right so it’s what I needed.It's a little difficult to get it out of my hands but once you do, the feel nice and keeps my toes from cutting. The only thing I noticed is the little plastic piece</label><br>
             </div>
-
             <br><hr width="90%">
-
             <div class="generate">
                 <h3>Try it!</h3><br>
-                <label>Premise</label>
-                <div><textarea type="text" id="premise" style="width:80%; height: 100px" ></textarea></div>
-                <label>Hypothesis</label>
-                <div><textarea type="text" id="hypothesis" style="width:80%; height: 100px"></textarea></div>
-                <button class="btn btn-primary btn=lg" type="submit" id="button" onclick="send_req();">Summit</button><br>
+                <h5><label>Language</label></h5>
+                <input type="radio" name="chk_lan" checked="checked" value="English"> English  
+                <input type="radio" name="chk_lan" value="Korean"> Korean
+                <br>
+                <br>
+                <h5><label>star rating</label></h5>
+                <select id="star_rating">
+                    <option value="1">⭐️ </option>
+                    <option value="2">⭐️⭐️ </option>
+                    <option value="3">⭐️⭐️⭐️ </option>
+                    <option value="4">⭐️⭐️⭐️⭐️ </option>
+                    <option value="5">⭐️⭐️⭐️⭐️⭐️ <s/option>
+                </select>
+                <br>
+                <br>
+                <h5><label>Context</label></h5>
+                <div><textarea type="text" id="context" style="width:80%; height: 100px"></textarea></div>
+                <button class="btn btn-primary btn=lg" type="submit" id="button" onclick="send_req();">Submit</button><br>
                 <label>Timer:&nbsp;</label><label id="timer">0.0</label><br>
                 <b><label id="warning" style="color:red;"></label></b>
             </div>

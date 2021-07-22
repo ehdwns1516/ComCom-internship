@@ -10,13 +10,71 @@ print("model loading...")
 
 # Model loading
 
-tokenizer = AutoTokenizer.from_pretrained("ehdwns1516/klue-roberta-base-kornli")
+tokenizer_1_kor = AutoTokenizer.from_pretrained("ehdwns1516/gpt3-kor-based_gpt2_review_SR1")
+tokenizer_2_kor = AutoTokenizer.from_pretrained("ehdwns1516/gpt3-kor-based_gpt2_review_SR2")
+tokenizer_3_kor = AutoTokenizer.from_pretrained("ehdwns1516/gpt3-kor-based_gpt2_review_SR3")
+tokenizer_4_kor = AutoTokenizer.from_pretrained("ehdwns1516/gpt3-kor-based_gpt2_review_SR4")
+tokenizer_5_kor = AutoTokenizer.from_pretrained("ehdwns1516/gpt3-kor-based_gpt2_review_SR5")
 
-classifier = pipeline(
-    "text-classification",
-    model="ehdwns1516/klue-roberta-base-kornli",
-    return_all_scores=True,
+tokenizer_1_en = AutoTokenizer.from_pretrained("ehdwns1516/gpt2_review_star1")
+tokenizer_2_en = AutoTokenizer.from_pretrained("ehdwns1516/gpt2_review_star2")
+tokenizer_3_en = AutoTokenizer.from_pretrained("ehdwns1516/gpt2_review_star3")
+tokenizer_4_en = AutoTokenizer.from_pretrained("ehdwns1516/gpt2_review_star4")
+tokenizer_5_en = AutoTokenizer.from_pretrained("ehdwns1516/gpt2_review_star5")
+
+generator_1_kor = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt3-kor-based_gpt2_review_SR1",
+    tokenizer=tokenizer_1_kor
 )
+generator_2_kor = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt3-kor-based_gpt2_review_SR2",
+    tokenizer=tokenizer_2_kor
+)
+generator_3_kor = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt3-kor-based_gpt2_review_SR3",
+    tokenizer=tokenizer_3_kor
+)
+generator_4_kor = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt3-kor-based_gpt2_review_SR4",
+    tokenizer=tokenizer_4_kor
+)
+generator_5_kor = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt3-kor-based_gpt2_review_SR5",
+    tokenizer=tokenizer_5_kor
+)
+
+generator_1_en = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt2_review_star1",
+    tokenizer=tokenizer_1_en
+)
+generator_2_en = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt2_review_star2",
+    tokenizer=tokenizer_2_en
+)
+generator_3_en = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt2_review_star3",
+    tokenizer=tokenizer_3_en
+)
+generator_4_en = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt2_review_star4",
+    tokenizer=tokenizer_4_en
+)
+generator_5_en = pipeline(
+    "text-generation",
+    model="ehdwns1516/gpt2_review_star5",
+    tokenizer=tokenizer_5_en
+)
+
+
 
 requests_queue = Queue()    # request queue.
 BATCH_SIZE = 1              # max request size.
@@ -37,7 +95,7 @@ def handle_requests_by_batch():
 
             for requests in request_batch:
                 try:
-                    requests["output"] = make_answer(requests['input'][0], requests['input'][1])
+                    requests["output"] = make_review(requests['input'][0], requests['input'][1], requests['input'][2])
 
                 except Exception as e:
                     requests["output"] = e
@@ -45,13 +103,62 @@ def handle_requests_by_batch():
 
 handler = Thread(target=handle_requests_by_batch).start()
 
+def del_dup(text):
+    result_textList = list()
+    d_text = text.split(' ')
+    for word in d_text:
+        if word not in result_textList:
+            result_textList.append(word)
+    return {'generated_text': " ".join(result_textList)}
 
-def make_answer(premise, hypothesis):
+
+def make_review(language ,star_rating, context):
     try:
-        result = dict()
-        result[0] = classifier(premise + tokenizer.sep_token + hypothesis)[0]
-        print(result)
-        return result
+        if language == "Korean":
+            result = dict()
+            if star_rating == "1":
+                result[0] = del_dup(generator_1_kor(context)[0]["generated_text"])
+                print(result)
+                return result
+            elif star_rating == "2":
+                result[0] = del_dup(generator_2_kor(context)[0]["generated_text"])
+                print(result)
+                return result
+            elif star_rating == "3":
+                result[0] = del_dup(generator_3_kor(context)[0]["generated_text"])
+                print(result)
+                return result
+            elif star_rating == "4":
+                result[0] = del_dup(generator_4_kor(context)[0]["generated_text"])
+                print(result)
+                return result
+            elif star_rating == "5":
+                result[0] = del_dup(generator_5_kor(context)[0]["generated_text"])
+                print(result)
+                return result
+
+        elif language == "English":
+            result = dict()
+            if star_rating == "1":
+                result[0] = generator_1_en(context)[0]
+                print(result)
+                return result
+            elif star_rating == "2":
+                result[0] = generator_2_en(context)[0]
+                print(result)
+                return result
+            elif star_rating == "3":
+                result[0] = generator_3_en(context)[0]
+                print(result)
+                return result
+            elif star_rating == "4":
+                result[0] = generator_4_en(context)[0]
+                print(result)
+                return result
+            elif star_rating == "5":
+                result[0] = generator_5_en(context)[0]
+                print(result)
+                return result
 
     except Exception as e:
         print('Error occur in script generating!', e)
@@ -65,11 +172,13 @@ def generate():
 
     try:
         args = []
-        premise = request.form['premise']
-        hypothesis = request.form['hypothesis']
+        sel_lan = request.form['sel_lan']
+        star_rating = request.form['star_rating']
+        context = request.form['context']
 
-        args.append(premise)
-        args.append(hypothesis)
+        args.append(sel_lan)
+        args.append(star_rating)
+        args.append(context)
 
     except Exception as e:
         return jsonify({'message': 'Invalid request'}), 500
