@@ -3,9 +3,7 @@
 [![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/ehdwns1516/review_generator)
 
 ## Overview
-This model takes the premise sentence and hypothesis sentence and classifies the relationship between the two sentences as one of entailment, contradiction, and neutral.
-
-Try using the KLUE-RoBERTa-base-KorNLI model as a KLUE-RoBERTa-base model trained on kakaobrain/KorNLI dataset.
+This service is models that generate reviews based on star rating and text. You can choose Language that English or Korean.
 
 Github: [review_generator](https://github.com/ehdwns1516/review_generator)
 
