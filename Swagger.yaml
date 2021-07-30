@@ -9,10 +9,10 @@ info:
     ---
           How to use:
           * Input your text what you want to summary.
-* Adjust the range of min words, max words and beamsearch.
-* Click summarize button for summary.
-* You will receive the sentences in order of accuracy as the number of beam search.
-* Only for English.
+          * Adjust the range of min words, max words and beamsearch.
+          * Click summarize button for summary.
+          * You will receive the sentences in order of accuracy as the number of beam search.
+          * Only for English.
     ---
 servers:
   - url: https://main-text-summarizer-ehdwns1516.endpoint.ainize.ai/
