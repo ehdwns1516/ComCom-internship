@@ -5,16 +5,17 @@ info:
   contact:
     name: Dongjoon
   description: |
-    This service is models that generate reviews based on star rating and text. You can choose Language that English or Korean.
+    This model is a service that summarizes English text. Trained with a dataset of news articles and can be run directly from demo.
     ---
           How to use:
-          * Select language you want generate review.
-          * Choose star rating and input your text.
-          * Click submit button for generating review.
-          * If the context is longer than 1200 characters, the context may be cut in the middle and the result may not come out well.
+          * Input your text what you want to summary.
+* Adjust the range of min words, max words and beamsearch.
+* Click summarize button for summary.
+* You will receive the sentences in order of accuracy as the number of beam search.
+* Only for English.
     ---
 servers:
-  - url: https://main-review-generator-ehdwns1516.endpoint.ainize.ai/
+  - url: https://main-text-summarizer-ehdwns1516.endpoint.ainize.ai/
 
 paths:
   /generate:
@@ -26,15 +27,18 @@ paths:
             schema:
               type: object
               properties:
-                sel_lan:
-                  type: string
-                star_rating:
-                  type: string
+                min_words:
+                  type: number
+                max_words:
+                  type: number
+                num_beams:
+                  type: number
                 context:
                   type: string
               required:
-                - sel_lan
-                - star_rating
+                - min_words
+                - max_words
+                - num_beams
                 - context
       responses: # Set response
         '200':
@@ -44,11 +48,8 @@ paths:
               schema:
                 type: object
                 example: {
-                  "0":[
-                    {
-                      "generated_text" : "the cost is right so it’s what I needed.It's a little difficult to get it out of my hands but once you do, the feel nice and keeps my toes from cutting. The only thing I noticed is the little plastic piece" 
-                    }
-                  ]
+                  "0":"Wales fly-half Rhys Patchell has been linked with a move away from Saracens, according to the club's director of rugby Dai Wilson.",
+                  "1":"Wales fly-half Rhys Patchell has been linked with a move away from Saracens, according to BBC Wales rugby correspondent Gareth Wilson."
                 }
         '400':
           description: "Bad Request Error"
