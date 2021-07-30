@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Review Generator
+  version: 1.0.0
+  contact:
+    name: Dongjoon
+  description: |
+    This service is models that generate reviews based on star rating and text. You can choose Language that English or Korean.
+    ---
+          How to use:
+          * Select language you want generate review.
+          * Choose star rating and input your text.
+          * Click submit button for generating review.
+          * If the context is longer than 1200 characters, the context may be cut in the middle and the result may not come out well.
+    ---
+servers:
+  - url: https://main-review-generator-ehdwns1516.endpoint.ainize.ai/
+
+paths:
+  /generate:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                sel_lan:
+                  type: string
+                star_rating:
+                  type: string
+                context:
+                  type: string
+              required:
+                - sel_lan
+                - star_rating
+                - context
+      responses: # Set response
+        '200':
+          description: "Successful Response"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                  "0":[
+                    {
+                      "generated_text" : "the cost is right so it’s what I needed.It's a little difficult to get it out of my hands but once you do, the feel nice and keeps my toes from cutting. The only thing I noticed is the little plastic piece" 
+                    }
+                  ]
+                }
+        '400':
+          description: "Bad Request Error"
+        '429':
+          description: "Too many requests"
+        '500':
+          description: "Server-side Error"
+  /queue_clear:
+    get:
+      responses:
+        '200':
+          description: "Clear request queue"
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Clear
+  /healthz:
+    get:
+      responses:
+        '200':
+          description: "get status of model server"
+          content:
+            application/json:
+              schema: 
+                type: string
+                example: Health
