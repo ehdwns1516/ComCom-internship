@@ -5,7 +5,7 @@
 ## Overview
 This model is a service that summarizes English text. Trained with a dataset of news articles and can be run directly from demo.
 
-Github: [review_generator](https://github.com/ehdwns1516/text_summarizer)
+Github: [text_summarizer](https://github.com/ehdwns1516/text_summarizer)
 
 Model: [HuggingFace](https://huggingface.co/ehdwns1516/bart_finetuned_xsum)
 
