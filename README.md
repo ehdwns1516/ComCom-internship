@@ -1,9 +1,9 @@
 # Review Generator
 ---
-[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/ehdwns1516/review_generator)
+[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/ehdwns1516/text_summarizer)
 
 ## Overview
-
+This model is a service that summarizes English text. Trained with a dataset of news articles and can be run directly from demo.
 
 Github: [review_generator](https://github.com/ehdwns1516/text_summarizer)
 
@@ -21,7 +21,7 @@ Model Code: [Ainize Workspace](https://ainize.ai/workspace/create?imageId=hnj955
 * You will receive the sentences in order of accuracy as the number of beam search.
 * Only for English.
 
-endpoint : [On Ainize](https://main-review-generator-ehdwns1516.endpoint.ainize.ai/)
+endpoint : [On Ainize](https://main-text-summarizer-ehdwns1516.endpoint.ainize.ai/)
 
 
 ## With cli
@@ -47,30 +47,26 @@ context: context
 ### output format
 ```
 {
-  "0":[
-    {"generated_text":"blah blah blah"}
-  ]
+  "0":"this is summary sentence"
 }
 ```
 
 ### API Predict Test
 ```
-$ curl --location --request POST 'https://main-review-generator-ehdwns1516.endpoint.ainize.ai/generate' \
---form 'sel_lan="English"' \
---form 'star_rating="5"' \
---form 'context="the cost"'
+$ curl --location --request POST 'https://main-text-summarizer-ehdwns1516.endpoint.ainize.ai/generate' \
+--form 'min_words="30"' \
+--form 'max_words="100"' \
+--form 'num_beams="2"' \
+--form 'context="The twice-capped 22-year-old is out of contract at the end of the season and has been linked with the Scarlets. Patchell is thought to be unhappy at Gareth Anscombe being preferred at fly-half and Wilson says there is interest in the player from Wales and abroad. "We're in the middle of discussions with Rhys, as we are with other players," Wilson said. "He's had a fair amount of interest, it's fair to say, from within Wales and from out of Wales. "We've made approaches to keep him. But ultimately what we need and want here are players who want to be here and play for Cardiff Blues."He'll make the appropriate decisions at the right time, as we will."Patchell made his Wales debut against Japan in June 2013 and was identified as a major prospect at fly-half.However, the arrival of Anscombe at the Blues in July 2014 from Waikato Chiefs in New Zealand saw the Cardiff-born Patchell moved to full-back to accommodate the newcomer."'
 {
-  "0":[
-    {
-      "generated_text" : "the cost is right so it’s what I needed.It's a little difficult to get it out of my hands but once you do, the feel nice and keeps my toes from cutting. The only thing I noticed is the little plastic piece" 
-    }
-  ]
+  "0":"Wales fly-half Rhys Patchell has been linked with a move away from Saracens, according to the club's director of rugby Dai Wilson.",
+  "1":"Wales fly-half Rhys Patchell has been linked with a move away from Saracens, according to BBC Wales rugby correspondent Gareth Wilson."
 }
 ```
 
 ### Healthy Check
 ```
-$ curl --request GET 'https://main-review-generator-ehdwns1516.endpoint.ainize.ai//healthz'
+$ curl --request GET 'https://main-text-summarizer-ehdwns1516.endpoint.ainize.ai/healthz'
 {
   Health
 }
@@ -78,8 +74,6 @@ $ curl --request GET 'https://main-review-generator-ehdwns1516.endpoint.ainize.a
 
 ## Acknowledgements
 ---
-* Dataset_Kor: [naver shopping review dataset](https://github.com/bab2min/corpus/tree/master/sentiment)
-* Dataset_En: [amazon review dataset](https://huggingface.co/datasets/amazon_reviews_multi)
-* Pre-trained model_Kor: [kykim/gpt3-kor-small_based_on_gpt2](https://huggingface.co/klue/roberta-base)
-* Pre-trained model_En: [GPT2](https://huggingface.co/gpt2)
+* Dataset: [xsum](https://huggingface.co/datasets/xsum)
+* Pre-trained model: [facebook/bart-large](https://huggingface.co/facebook/bart-large)
 
