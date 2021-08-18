@@ -1,20 +1,18 @@
 openapi: 3.0.0
 info:
-  title: Sentence Inference Multiple Choice
+  title: Grasping Sentence Intent
   version: 1.0.0
   contact:
     name: Dongjoon
   description: |
-    This model finds the most appropriate sentence among multiple choice sentences to follow the main sentence. It is a way to analyze the situation through the main sentence and infer the next sentence.
+    This model grasp the intent for a given sentence and classifies whether it is yes/no, alternative, wh-questions, prohibitions, requirements, or strong requirements.
     ---
           How to use:
-          * Input main sentence.
-          * Click add button to make inference sentence input area.
-          * Input inference sentences.
-          * Click "Find the most appropriate sentence." button to get result.
+          * Input sentences what you want to grasp intent.
+          * Click "Grasp sentence intent" button to get intent.
     ---
 servers:
-  - url: https://main-sentence-inference-multiple-choice-ehdwns1516.endpoint.ainize.ai/
+  - url: https://main-klue-ro-ber-ta-base-sae-ehdwns1516.endpoint.ainize.ai/
 
 paths:
   /generate:
@@ -26,15 +24,9 @@ paths:
             schema:
               type: object
               properties:
-                count:
-                  type: number
-                items[]:
-                  type: string
                 context:
                   type: string
               required:
-                - count
-                - items[]
                 - context
       responses: # Set response
         '200':
@@ -46,7 +38,7 @@ paths:
                 example: {
                   "0":[
                     {
-                      "generated_text" : "the cost is right so it’s what I needed.It's a little difficult to get it out of my hands but once you do, the feel nice and keeps my toes from cutting. The only thing I noticed is the little plastic piece" 
+                        "label":"wh- questions","score":0.9992098808288574
                     }
                   ]
                 }

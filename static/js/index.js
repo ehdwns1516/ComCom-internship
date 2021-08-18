@@ -86,7 +86,6 @@ function send_req() {
     }).then(data => {
         let result_sentece = "";
         result_sentece = data["label"]
-        alert(result_sentece)
         clearInterval(timer);
         time_obj.innerText = 'Done!';
         flag = false;
