@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Review Generator</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<script type="text/javascript">
+    let time_obj = undefined;
+    let flag = undefined;
+    let chars = undefined;
+
+    window.onload = () => {
+        time_obj = document.getElementById("timer");
+        flag = false;       // 더블 클릭 체크
+    }
+
+    function double_submit_check() {
+        if (flag) {
+            console.log("double");
+            return true;
+        }
+        else {
+            flag = true;
+            return false;
+        }
+    }
+
+    function send_req() {
+        if (double_submit_check()){
+            return ;
+        }
+        
+        let star_rating = document.getElementById("star_rating").value;
+        let context = document.getElementById("context").value;
+        const result = document.getElementById('result');
+        let chk_radio = document.getElementsByName('chk_lan');
+		let sel_lan = null;
+
+		for(let i=0;i<chk_radio.length;i++){
+			if(chk_radio[i].checked == true){ 
+				sel_lan = chk_radio[i].value;
+			}
+		}
+
+		if(sel_lan == null){
+            document.getElementById('warning').innerText = 'Please select language!';
+            flag = false;
+            return ;
+		}
+        if ( star_rating == '') {
+            document.getElementById('warning').innerText = 'Please choose star rating!';
+            flag = false;
+            return ;
+        }
+
+        if ( context == '') {
+            document.getElementById('warning').innerText = 'Please fill text!';
+            flag = false;
+            return ;
+        }
+
+        const formData = new FormData();
+        const url = "/generate";
+        let start = 0;
+
+        formData.append('sel_lan', sel_lan);
+        formData.append('star_rating', star_rating);
+        formData.append('context', context);
+
+        // timer
+        timer = setInterval(() => {
+            start += 1;
+            time_obj.innerText = `${start / 10} 's`;
+        }, 100);
+
+        fetch (url, { method: 'POST', body: formData, })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                clearInterval(timer);
+                flag = false;
+            }
+        }).catch(err => {
+            clearInterval(timer);
+            flag = false;
+            document.getElementById('warning').innerText = err;
+        }).then(data => {
+            const context_ = document.getElementById("context");
+            result.innerHTML = data[0]["generated_text"];
+            context_.value = data[0]["generated_text"];
+            clearInterval(timer);
+            time_obj.innerText = 'Done!';
+            flag = false;
+            if (context == result.innerHTML) {
+                alert("Input sentence and result is same. Please add words.")
+            }
+        }).catch(err => {
+            clearInterval(timer);
+            flag = false;
+            document.getElementById('warning').innerText = err;
+        });
+
+    }
+
+</script>
+<body>
+    <div class="styles">
+        <style>
+                #button{
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                    border-top-left-radius: 5pt;
+                    border-top-right-radius: 5pt;
+                    border-bottom-left-radius: 5pt;
+                    border-bottom-right-radius: 5pt;
+                }
+
+                #length{
+                    width: 70px;
+                    height: 30px;
+                    border-top-left-radius: 5pt;
+                    border-top-right-radius: 5pt;
+                    border-bottom-left-radius: 5pt;
+                    border-bottom-right-radius: 5pt;
+                }
+
+                table {
+                  border-spacing: 10px;
+                  border-collapse: separate;
+                }
+
+        </style>
+    </div>
+    <div class="container">
+        <div class="jumbotron mt-3">
+            <div class="intro">
+                <br>
+                <!-- Project title -->
+                <h1>Review Generator</h1><br>
+                <p>These models are each trained with a dataset of reviews with star rating from 1 to 5 for Engish and Korean.</p>
+                <a>Github : </a> <a href="https://github.com/KLUE-benchmark/KLUE" target="_blank">KLUE-benchmark/KLUE</a><br>
+                <a>Open API : </a> <a href="https://ainize.ai/ehdwns1516/KLUE-RoBERTa-base-KorNLI" target="_blank">On Ainize</a><br>
+                <a>License : </a> <a href="https://github.com/KLUE-benchmark/KLUE/blob/main/License.md" target="_blank">CC-BY-SA-4.0</a><br>
+            </div>
+
+            <hr width="90%">
+
+            <div class="Notice">
+                <h3>Notice</h3>
+                <ul>
+                    <li>This model trained with Korean dataset.</li>
+                    <li>Select language you want generate review.</li>
+                    <li>You must choose star rating and input your text.</li>
+                </ul>
+            </div>
+
+            <hr width="90%">
+
+            <div class="sample">
+                <h3><label>Example</label></h3>
+                <h5><label>Language</label></h5>
+                <input type="radio" name="chk_info" checked="checked" value="English"> English  
+                <input type="radio" name="chk_info" value="Korean"> Korean
+                <br>
+                <br>
+                <h5><label>star rating</label></h5>
+                <select>
+                    <option value="5">⭐️⭐️⭐️⭐️⭐️ </option>
+                </select>
+                <br>
+                <br>
+                <h5><label>Context</label></h5>
+                <label>the cost</label><br><br>
+                <h5><label>Result</label></h5>
+                <label>the cost is right so it’s what I needed.It's a little difficult to get it out of my hands but once you do, the feel nice and keeps my toes from cutting. The only thing I noticed is the little plastic piece</label><br>
+            </div>
+            <br><hr width="90%">
+            <div class="generate">
+                <h3>Try it!</h3><br>
+                <h5><label>Language</label></h5>
+                <input type="radio" name="chk_lan" checked="checked" value="English"> English  
+                <input type="radio" name="chk_lan" value="Korean"> Korean
+                <br>
+                <br>
+                <h5><label>star rating</label></h5>
+                <select id="star_rating">
+                    <option value="1">⭐️ </option>
+                    <option value="2">⭐️⭐️ </option>
+                    <option value="3">⭐️⭐️⭐️ </option>
+                    <option value="4">⭐️⭐️⭐️⭐️ </option>
+                    <option value="5">⭐️⭐️⭐️⭐️⭐️ <s/option>
+                </select>
+                <br>
+                <br>
+                <h5><label>Context</label></h5>
+                <div><textarea type="text" id="context" style="width:80%; height: 100px"></textarea></div>
+                <button class="btn btn-primary btn=lg" type="submit" id="button" onclick="send_req();">Submit</button><br>
+                <label>Timer:&nbsp;</label><label id="timer">0.0</label><br>
+                <b><label id="warning" style="color:red;"></label></b>
+            </div>
+
+            <hr width="90%">
+
+            <div class="result">
+                <h3><label>Result</label></h3>
+                <label id="result"></label>
+            </div>
+
+            <br><hr width="50%">
+        </div>
+    </div>
+</body>
+</html>
