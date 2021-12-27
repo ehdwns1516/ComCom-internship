@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title> Grasping Sentence Intent </title>
+
+    <link rel="stylesheet" href="../static/css/app.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+</head>
+
+<script src="../static/js/index.js"></script>
+
+<body>
+    <h2> Grasping Sentence Intent </h2>
+    <div class="">
+        <div class="row">
+            <div class="col-sm-1"></div>
+
+            <div class="col-sm-10">
+                <center>
+                    <h4>model: KLUE-RoBERTa-base_sae</h4>
+                    <br>
+                </center>
+                <div class="overlay">
+                    <div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>
+                </div>
+                <h4> Overview </h4>
+                <p>This model grasp the intent for a given sentence and classifies whether it is yes/no, alternative, wh-questions, prohibitions, requirements, or strong requirements.
+                Try using the KLUE-RoBERTa-base_sae model as a KLUE-RoBERTa-base model trained on kor_sae dataset.</p>
+                <a>Huggingface: </a> <a href="https://huggingface.co/ehdwns1516/klue-roberta-base_sae" target="_blank">klue-roberta-base_sae</a><br>     
+                <a>Dataset: </a> <a href="https://huggingface.co/datasets/kor_sae" target="_blank">kor_sae</a><br>
+                <a>Open API: </a> <a href="https://ainize.ai/ehdwns1516/KLUE-RoBERTa-base_sae" target="_blank">On Ainize</a><br>
+                <br>
+                <h4>Notice</h4>
+                <ul>
+                    <li>Type the sentence you want to know the intent and click the Grasp sentence intent button.</li>
+                    <li>This model trained with Korean dataset.</li>
+                    <li>You can use English, but don't expect accuracy.</li>
+                </ul>
+                <br>
+                <h4> Sentence </h4>
+                <textarea class="form-control txt_input"
+                    id="context" onkeyup="context_changed(this.value);">내일 날씨가 어떨까?</textarea>
+                
+                <label id="word_count">words: </label>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6" style="margin-left: 25%">
+                        <label></label>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-submit" onclick="send_req();">Grasp sentence intent</button>
+                    </div>
+                </div>
+                <br>
+                <h4> Result </h4>
+                <div id="box">
+                    <p style="width: 100%">
+                        <input type='text' class='item form-control' style='width: 100%; display: inline; background: white' onkeyup='text_changed()' value="yes/no" readonly> 
+                    </p>
+                    <p>
+                        <input type='text' class='item form-control' style='width: 100%; display: inline; background: white' onkeyup='text_changed()' value="alternative" readonly> 
+                    </p>
+                    <p>
+                        <input type='text' class='item form-control' style='width: 100%; display: inline; background: white' onkeyup='text_changed()' value="wh- questions" readonly> 
+                    </p>
+                    <p>
+                        <input type='text' class='item form-control' style='width: 100%; display: inline; background: white' onkeyup='text_changed()' value="prohibitions" readonly> 
+                    </p>
+                    <p>
+                        <input type='text' class='item form-control' style='width: 100%; display: inline; background: white' onkeyup='text_changed()' value="requirements" readonly> 
+                    </p>
+                    <p>
+                        <input type='text' class='item form-control' style='width: 100%; display: inline; background: white' onkeyup='text_changed()' value="strong requirements" readonly> 
+                    </p>
+                </div>
+                
+                <label>Timer:&nbsp;</label><label id="timer">0.0</label><br>
+                <b><label id="warning" style="color:red;"></label></b>
+                <div class="empty_space"></div>
+            </div> 
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    context_changed( document.getElementById("context").value);
+</script>
+
+</html>

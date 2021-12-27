@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  title: Grasping Sentence Intent
+  version: 1.0.0
+  contact:
+    name: Dongjoon
+  description: |
+    This model grasp the intent for a given sentence and classifies whether it is yes/no, alternative, wh-questions, prohibitions, requirements, or strong requirements.
+    ---
+          How to use:
+          * Input sentences what you want to grasp intent.
+          * Click "Grasp sentence intent" button to get intent.
+    ---
+servers:
+  - url: https://main-klue-ro-ber-ta-base-sae-ehdwns1516.endpoint.ainize.ai/
+
+paths:
+  /generate:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                context:
+                  type: string
+              required:
+                - context
+      responses: # Set response
+        '200':
+          description: "Successful Response"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                  "0":[
+                    {
+                        "label":"wh- questions","score":0.9992098808288574
+                    }
+                  ]
+                }
+        '400':
+          description: "Bad Request Error"
+        '429':
+          description: "Too many requests"
+        '500':
+          description: "Server-side Error"
+  /queue_clear:
+    get:
+      responses:
+        '200':
+          description: "Clear request queue"
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Clear
+  /healthz:
+    get:
+      responses:
+        '200':
+          description: "get status of model server"
+          content:
+            application/json:
+              schema: 
+                type: string
+                example: Health
