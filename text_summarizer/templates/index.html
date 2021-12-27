@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Text Summarizer</title>
+
+    <link rel="stylesheet" href="../static/css/app.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+</head>
+
+<script src="../static/js/index.js"></script>
+
+<body>
+    <h2> Text Summarizer </h2>
+    <div class="">
+        <div class="row">
+            <div class="col-sm-1"></div>
+
+            <div class="col-sm-10">
+                <center>
+                    <h4>model: bart_large_xsum</h4>
+                    <br>
+                </center>
+                <div class="overlay">
+                    <div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>
+                </div>
+                <br>
+                <h4> Input Text </h4>
+                <textarea class="form-control txt_input"
+                    id="context" onkeyup="context_changed(this.value);">The twice-capped 22-year-old is out of contract at the end of the season and has been linked with the Scarlets. Patchell is thought to be unhappy at Gareth Anscombe being preferred at fly-half and Wilson says there is interest in the player from Wales and abroad. "We're in the middle of discussions with Rhys, as we are with other players," Wilson said. "He's had a fair amount of interest, it's fair to say, from within Wales and from out of Wales. "We've made approaches to keep him. But ultimately what we need and want here are players who want to be here and play for Cardiff Blues."He'll make the appropriate decisions at the right time, as we will."Patchell made his Wales debut against Japan in June 2013 and was identified as a major prospect at fly-half.However, the arrival of Anscombe at the Blues in July 2014 from Waikato Chiefs in New Zealand saw the Cardiff-born Patchell moved to full-back to accommodate the newcomer.Anscombe, who has a national dual contract which is 60% funded by the Welsh Rugby Union, was called-up by Wales as injury cover at the Rugby World Cup, starting at full-back against Australia and South Africa. Patchell did not make Wales coach Warren Gatland's final squad for the tournament.However, an ankle injury means Anscombe could miss the start of the 2016 Six Nations, leaving Patchell as Blues' front-line fly-half.Scarlets coach Wayne Pivac was asked if he was interested in signing Patchell, but was non-committal. "We'll talk about that another time, but I understand he's not going back to the Blues and that's disappointing for them," he said.</textarea>
+                
+                <label id="word_count">words: </label>
+                
+                <br>
+                <br>
+                <h4> Parameters </h4>
+                <div class="form-row">
+
+                    <div class="form-group col-md-3" style="padding:1.5%; padding-top: 0px; padding-bottom: 0px">
+                        <label for="min_words" id="label_min_words"># min words in summary: 50</label>
+                        <input type="range" class="custom-range" min="30" max="80" value="50" step="10" id="min_words" oninput="change_min_words(this.value)" onchange="change_min_words(this.value)">
+                    </div>
+
+                    <div class="form-group col-md-3" style="padding:1.5%; padding-top: 0px; padding-bottom: 0px">
+                        <label for="max_words" id="label_max_words"># max words in summary: 100</label>
+                        <input type="range" class="custom-range" min="100" max="200" value="100" step="10" id="max_words" oninput="change_max_words(this.value)" onchange="change_max_words(this.value)">
+                    </div>
+
+                    <div class="form-group col-md-3" style="padding:1.5%; padding-top: 0px; padding-bottom: 0px">
+                        <label for="num_beams" id="label_num_beams"># beam search: 2</label>
+                        <input type="range" class="custom-range" min="1" max="10" value="2" step="1" id="num_beams" oninput="change_num_beams(this.value)" onchange="change_num_beams(this.value)">
+                    </div>
+
+                    <div class="form-group col-md-3" style="padding:1.5%; padding-top: 0px; padding-bottom: 0px">
+                        <label></label>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-submit" onclick="send_req();">Summarize</button>
+                    </div>
+                </div>
+                <h4> Summary </h4>
+                <textarea class="form-control txt_summary" id="result" readonly> </textarea>
+                <label>Timer:&nbsp;</label><label id="timer">0.0</label><br>
+                <b><label id="warning" style="color:red;"></label></b>
+                <div class="empty_space"></div>
+            </div> 
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    context_changed( document.getElementById("context").value);
+</script>
+
+</html>

@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: Review Generator
+  version: 1.0.0
+  contact:
+    name: Dongjoon
+  description: |
+    This model is a service that summarizes English text. Trained with a dataset of news articles and can be run directly from demo.
+    ---
+          How to use:
+          * Input your text what you want to summary.
+          * Adjust the range of min words, max words and beamsearch.
+          * Click summarize button for summary.
+          * You will receive the sentences in order of accuracy as the number of beam search.
+          * Only for English.
+    ---
+servers:
+  - url: https://main-text-summarizer-ehdwns1516.endpoint.ainize.ai/
+
+paths:
+  /generate:
+    post:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                min_words:
+                  type: number
+                max_words:
+                  type: number
+                num_beams:
+                  type: number
+                context:
+                  type: string
+              required:
+                - min_words
+                - max_words
+                - num_beams
+                - context
+      responses: # Set response
+        '200':
+          description: "Successful Response"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                  "0":"Wales fly-half Rhys Patchell has been linked with a move away from Saracens, according to the club's director of rugby Dai Wilson.",
+                  "1":"Wales fly-half Rhys Patchell has been linked with a move away from Saracens, according to BBC Wales rugby correspondent Gareth Wilson."
+                }
+        '400':
+          description: "Bad Request Error"
+        '429':
+          description: "Too many requests"
+        '500':
+          description: "Server-side Error"
+  /queue_clear:
+    get:
+      responses:
+        '200':
+          description: "Clear request queue"
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Clear
+  /healthz:
+    get:
+      responses:
+        '200':
+          description: "get status of model server"
+          content:
+            application/json:
+              schema: 
+                type: string
+                example: Health
